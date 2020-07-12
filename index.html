@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Dataviz - Platô - Julho/20</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Rodrigo Almeida [rodrigo.almeida at gmail.com]" />
+    <meta name="date" content="2020-07-12" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Dataviz - Platô - Julho/20
+## Atividade 1 - Avaliando Dataset de Passageiros do Titanic
+### Rodrigo Almeida [rodrigo.almeida at gmail.com]
+### 2020-07-12
+
+---
+
+
+
+
+
+class: inverse, center, middle
+
+# Quão longeva foi a vida dos habitantes da Titanicolândia (!) antes de seu fatídico fim?
+
+---
+class: center, middle
+
+# Preparando os Dados
+
+&lt;div class="figure"&gt;
+&lt;img src="imgs/carbon.png" alt="Limpeza e Tratamento de Dados" width="2131" /&gt;
+&lt;p class="caption"&gt;Limpeza e Tratamento de Dados&lt;/p&gt;
+&lt;/div&gt;
+
+---
+class: inverse, center, middle
+
+# Parte 1: Contextualização
+___
+
+
+---
+class: center, middle
+
+# Qual era Expectativa de vida nos Estados Unidos em 1912?
+
+&lt;div class="figure"&gt;
+&lt;img src="imgs/top-states-for-life-expectancy.png" alt="Expectativa de Vida nos USA" width="731" /&gt;
+&lt;p class="caption"&gt;Expectativa de Vida nos USA&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+# Informações Relevantes
+
+Qual o tamanho da população que estamos avaliando?
+
+
+```r
+nrow(dados)
+```
+
+```
+## [1] 1046
+```
+
+
+Quantos Sobreviveram e Quantos Morreram?
+
+```r
+knitr::kable(dados %&gt;% 
+               group_by(Sobreviveu) %&gt;% 
+               summarise(Total = n()), 
+             format = 'html') 
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Sobreviveu &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Total &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; no &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 619 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; yes &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 427 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# Informações dos Mortos
+
+Dados de Idade Média, Desvio Padrão (dp) e Valor médio do sexo
+
+
+```r
+knitr::kable(dados %&gt;% 
+               filter(Sobreviveu == "no") %&gt;% 
+               group_by(Classe) %&gt;% 
+               summarise(media_idade = mean(Idade), dp = sd(Idade), 
+                         media_sexo = mean(Codigo_Sexo) ), 
+             format = 'html') 
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Classe &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; media_idade &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; dp &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; media_sexo &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 43.24757 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14.22730 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0485437 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33.16781 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.23523 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0753425 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 25.97455 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.88077 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.2162162 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+Valores da variável media_sexo mais próximos de zero indicam forte prevalência de indíviduos do sexo masculino. 
+
+---
+
+# Informações - Classe 1
+
+&lt;div class="figure"&gt;
+&lt;img src="imgs/Distribuicao_Classe1.png" alt="Distribuição de Probabilidade da Idade dos Titaniquianos da Classe 1 que não sobreviveram" width="2715" /&gt;
+&lt;p class="caption"&gt;Distribuição de Probabilidade da Idade dos Titaniquianos da Classe 1 que não sobreviveram&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+# Informações - Classe 2
+
+&lt;div class="figure"&gt;
+&lt;img src="imgs/Distribuicao_Classe2.png" alt="Distribuição de Probabilidade da Idade dos Titaniquianos da Classe 2 que não sobreviveram" width="2688" /&gt;
+&lt;p class="caption"&gt;Distribuição de Probabilidade da Idade dos Titaniquianos da Classe 2 que não sobreviveram&lt;/p&gt;
+&lt;/div&gt;
+
+---
+
+# Informações - Classe 3
+
+&lt;div class="figure"&gt;
+&lt;img src="imgs/Distribuicao_Classe3.png" alt="Distribuição de Probabilidade da Idade dos Titaniquianos da Classe 3 que não sobreviveram" width="2672" /&gt;
+&lt;p class="caption"&gt;Distribuição de Probabilidade da Idade dos Titaniquianos da Classe 3 que não sobreviveram&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+class: inverse, center, middle
+
+# Parte 2: Visualização
+___
+
+### Figurativa
+
+---
+
+# Quem Sobreviveu?
+
+181 Titaniquianos 'Classe 1', 115 'Classe 2' e 131 'Classe 3'. Aí estão eles:
+
+&lt;img src="imgs/ativ1_Sobreviventes.png" width="3125" /&gt;
+---
+# Quem Não Sobreviveu?
+
+103 Titaniquianos 'Classe 1', 146 'Classe 2' e __370__ 'Classe 3'. Aí estão eles:
+
+&lt;img src="imgs/ativ1_NSobreviventes.png" width="3137" /&gt;
+---
+class: inverse, center, middle
+
+# Parte 3: Visualização
+___
+
+### Abstrata
+
+---
+
+# Como funciona?
+
+&lt;img src="imgs/PetalaPadrao.png" width="1829" /&gt;
+
+
+---
+
+# Classe 1
+
+&lt;img src="imgs/Petalas_Classe1.png" width="50%" /&gt;
+
+
+---
+
+# Classe 2
+
+&lt;img src="imgs/Petala_Classe2.png" width="50%" /&gt;
+
+
+---
+
+# Classe 3
+
+&lt;img src="imgs/Petalas_Classe3.png" width="50%" /&gt;
+
+
+
+---
+class: center, middle
+
+# Fim!
+
+Limpeza, Tratamento e Estatísticas dos dados usando [**R 4.0**](https://www.r-project.org/)
+
+Slides criados através do pacote R [**xaringan**](https://github.com/yihui/xaringan) com a ajuda de [**remark.js**](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), e [**R Markdown**](https://rmarkdown.rstudio.com).
+
+A imagem do Girassol foi obtida, de forma gratuita, através do site [Sunflower Vectors by Vecteezy](https://www.vecteezy.com/free-vector/sunflower)
+
+Os demais ícones fazem parte da biblioteca de elementos infográficos disponíveis após instalação do [Software Adobe Illustrator](https://www.adobe.com/br/products/illustrator.html).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
